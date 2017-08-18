@@ -1,9 +1,10 @@
 package com.libertymutual.pokergame.models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Hand {
-	
+
 	ArrayList<Card> cards;
 	
 	public Hand() {
@@ -14,8 +15,12 @@ public class Hand {
 		cards.add(card);
 	}
 	
+	public List<Card> getCards() {
+		return cards;
+	}
+	
 	public int[] getValues() {
-		int[] sums = new int[] {0, 0 };
+		int[] sums = new int[] { 0, 0 };
 		
 		for (Card c : cards) {
 			int[] values = c.getValues();
