@@ -4,7 +4,8 @@ import java.util.List;
 
 public class Player {
 
-	public int wallet = 0;
+	private int wallet = 0;
+	private Hand hand = new Hand();
 		
 	public Player (int wallet){
 		this.wallet = wallet;
@@ -16,6 +17,11 @@ public class Player {
 	
 	public int getWalletBalance() {
 		return wallet;
+	}
+
+	public void takeCard(Card firstCard) {
+		 hand.addCard(firstCard);
+		
 	}
 	
 	

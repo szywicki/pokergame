@@ -1,1 +1,7 @@
-<h2>Dealer Hand:</h2>
+<h2>
+	Dealer Hand: 
+	{{#dealerHand}} <!-- for (Card card : dealerHand) { -->
+		{{ visualRepresentation }}
+		{{ suit }}  <!-- 	the current object, card, is the thing that is here -->
+	{{/dealerHand}} <!-- } -->
+</h2>

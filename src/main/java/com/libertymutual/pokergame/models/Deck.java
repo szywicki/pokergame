@@ -61,10 +61,10 @@ public class Deck {
 				if (Math.random() < 0.5) {
 					if (holder1Index < 26) {
 						cardToMove = tempCardHolder1[holder1Index];
-						holder2Index += 1;
+						holder1Index += 1;
 					} else {
 						cardToMove = tempCardHolder2[holder2Index];
-						holder1Index += 1;
+						holder2Index += 1;
 					}
 				} else {
 					if (holder2Index < 26) {
@@ -77,7 +77,7 @@ public class Deck {
 				}
 				cards[overallIndex] = cardToMove;
 				overallIndex += 1;
-				}
+			}
 		}
 	}
 }

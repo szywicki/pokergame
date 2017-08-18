@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.libertymutual.pokergame.models.Card;
+import com.libertymutual.pokergame.models.Dealer;
 import com.libertymutual.pokergame.models.Deck;
 import com.libertymutual.pokergame.models.Hand;
 import com.libertymutual.pokergame.models.Player;
@@ -18,18 +20,20 @@ public class TableController {
 
 	Player newPlayer;
 	Deck newDeck;
+	Dealer newDealer;
 	
 	public TableController () {
 		newPlayer = new Player(100);
 		newDeck = new Deck();
+		newDealer = new Dealer();
+		
+		newDeck.shuffle();
 	}
 	
 	@PostMapping("") 
 	public ModelAndView startTheGame() {
 		
-		//Hand newHand = new Hand();
-	
-		
+					
 		ModelAndView mv = new ModelAndView("home/new-game");
 		return mv;
 //		mv.addObject();
@@ -40,12 +44,25 @@ public class TableController {
 		model.addAttribute("currentBet", amount);
 		newPlayer.makeBet(amount);
 		model.addAttribute("walletBalance", newPlayer.getWalletBalance());
-		return ("home/currentBet-form");
+		Card firstCard = newDeck.getCard();
+		newPlayer.takeCard(firstCard);
+		Card secondCard = newDeck.getCard();
+		newDealer.takeCard(secondCard);
+		Card thirdCard = newDeck.getCard();
+		newPlayer.takeCard(thirdCard);
+		Card fourthCard = newDeck.getCard();
+		newDealer.takeCard(fourthCard);
+		
+		model.addAttribute("dealerHand", newDealer.getCards());
+		
+		return ("home/hand-form");
 	}
 	
-//	@PostMapping("/deal")
-//	public void dealTheCards(deck)
-//	}
+	@PostMapping("/deal")
+	public String dealTheCards() {
+		
+		return ("home/hand-form");
+	}
 	
 //	public void keepHittingHand(Deck deck) {
 //		int[] values = hand.getValues();
