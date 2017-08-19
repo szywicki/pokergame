@@ -30,4 +30,10 @@ public class Hand {
 		
 		return sums;
 	}
+
+	public boolean isBlackjack() {
+		int[] values = getValues();
+		return cards.size() == 2 &&
+				(values[0] == 21 || values[1] == 21);
+	}
 }

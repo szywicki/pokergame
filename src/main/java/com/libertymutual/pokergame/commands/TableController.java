@@ -18,63 +18,64 @@ import com.libertymutual.pokergame.models.Player;
 
 public class TableController {
 
-	Player newPlayer;
-	Deck newDeck;
-	Dealer newDealer;
+	private Player newPlayer;
+	private Dealer newDealer;
 	
 	public TableController () {
 		newPlayer = new Player(100);
-		newDeck = new Deck();
 		newDealer = new Dealer();
 		
-		newDeck.shuffle();
 	}
 	
 	@PostMapping("") 
-	public ModelAndView startTheGame() {
-		
-					
+	public ModelAndView startTheGame() {				
 		ModelAndView mv = new ModelAndView("home/new-game");
 		return mv;
-//		mv.addObject();
 	}
 	
 	@PostMapping("/bet")
 	public String returnsTheBet(int amount, Model model) {
+		
+		// Player makes bet, wallet balance changes
 		model.addAttribute("currentBet", amount);
 		newPlayer.makeBet(amount);
 		model.addAttribute("walletBalance", newPlayer.getWalletBalance());
-		Card firstCard = newDeck.getCard();
-		newPlayer.takeCard(firstCard);
-		Card secondCard = newDeck.getCard();
-		newDealer.takeCard(secondCard);
-		Card thirdCard = newDeck.getCard();
-		newPlayer.takeCard(thirdCard);
-		Card fourthCard = newDeck.getCard();
-		newDealer.takeCard(fourthCard);
 		
+		// Deal the cards
+		newDealer.newRound();
+		newDealer.giveDealerCard();
+		newDealer.givePlayerCard(newPlayer);
+		newDealer.giveDealerCard();
+		newDealer.givePlayerCard(newPlayer);
+		newDealer.giveDealerCard();
+		
+		// Display the cards
 		model.addAttribute("dealerHand", newDealer.getCards());
-		
+		model.addAttribute("playerHand", newPlayer.getCards());
+	
 		return ("home/hand-form");
+			
 	}
-	
-	@PostMapping("/deal")
-	public String dealTheCards() {
 		
-		return ("home/hand-form");
-	}
-	
-//	public void keepHittingHand(Deck deck) {
-//		int[] values = hand.getValues();
-//		while (values[0] < 17 || values[1] < 17){
-//			Card theNewCard = deck.getCard();
-//			hand.addCard(theNewCard);
-//			values = hand.getValues();
-//	}
-	
 	@GetMapping("")
 	public String showTheTable() {
 		return ("home/default");
 	}
+	
+	@PostMapping("/hit")
+	public String playerHit(int amount, Model model) {
+		model.addAttribute("currentBet", amount);
+		model.addAttribute("walletBalance", newPlayer.getWalletBalance());
+		newDealer.givePlayerCard(newPlayer);
+		return ("home/hand-form");
+	}
+	
+//	@PostMapping("")
+//	public String playerStand() {
+//		newDealer.endRound();
+//		if (newDealer.isBust()) {
+//			newPlayer.p
+//		}
+//	}
 	
 }

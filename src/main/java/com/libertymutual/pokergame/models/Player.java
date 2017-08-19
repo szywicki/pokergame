@@ -12,7 +12,11 @@ public class Player {
 	}
 	
 	public void makeBet(int betAmount) {
+		if (wallet != 0) {
 		wallet = wallet - betAmount;
+	} else {
+		betAmount = 0;
+	}
 	}
 	
 	public int getWalletBalance() {
@@ -23,6 +27,18 @@ public class Player {
 		 hand.addCard(firstCard);
 		
 	}
+
+	public List<Card> getCards() {
+		return hand.getCards();
+	}
+
+	public boolean isBust() {
+		int[] values = hand.getValues();
+		return values[0] > 21 && values[1] > 21;
+	}
 	
+	public boolean hasBlackjack() {
+		return hand.isBlackjack();
+	}
 	
 }
