@@ -17,10 +17,15 @@ import com.libertymutual.pokergame.models.Player;
 @RequestMapping("/")
 
 public class TableController {
-
+	private boolean canShowHitAndStand;
+	private boolean canShowPlayAgain;
+	
+	// Declare variables
 	private Player newPlayer;
 	private Dealer newDealer;
+	private int currentBet;
 	
+	// Constructor for Table 
 	public TableController () {
 		newPlayer = new Player(100);
 		newDealer = new Dealer();
@@ -33,27 +38,36 @@ public class TableController {
 		return mv;
 	}
 	
+	@GetMapping("/hand")
+	public String refreshTheTable(Model model) {
+		model.addAttribute("currentBet", currentBet);
+		model.addAttribute("walletBalance", newPlayer.getWalletBalance());
+		model.addAttribute("dealerHand", newDealer.getCards());
+		model.addAttribute("playerHand", newPlayer.getCards());
+		model.addAttribute("canShowHitAndStand", canShowHitAndStand);
+		model.addAttribute("canShowPlayAgain",canShowPlayAgain);
+		return ("home/hand-form");
+	}
 	@PostMapping("/bet")
 	public String returnsTheBet(int amount, Model model) {
 		
 		// Player makes bet, wallet balance changes
-		model.addAttribute("currentBet", amount);
+		currentBet = amount;
 		newPlayer.makeBet(amount);
-		model.addAttribute("walletBalance", newPlayer.getWalletBalance());
 		
 		// Deal the cards
 		newDealer.newRound();
-		newDealer.giveDealerCard();
+		canShowHitAndStand = true;
+		canShowPlayAgain = false;
+		newPlayer.playerClearHand();
+		newDealer.dealerClearHand();
 		newDealer.givePlayerCard(newPlayer);
 		newDealer.giveDealerCard();
 		newDealer.givePlayerCard(newPlayer);
 		newDealer.giveDealerCard();
 		
 		// Display the cards
-		model.addAttribute("dealerHand", newDealer.getCards());
-		model.addAttribute("playerHand", newPlayer.getCards());
-	
-		return ("home/hand-form");
+		return "redirect:/hand";
 			
 	}
 		
@@ -63,19 +77,44 @@ public class TableController {
 	}
 	
 	@PostMapping("/hit")
-	public String playerHit(int amount, Model model) {
-		model.addAttribute("currentBet", amount);
-		model.addAttribute("walletBalance", newPlayer.getWalletBalance());
+	public String playerHit(Model model) {
+		// Give player another card if not a Bust
+		if (!newPlayer.isBust()) {
 		newDealer.givePlayerCard(newPlayer);
-		return ("home/hand-form");
+		// If they are a bust, end the round and payout
+		} else {
+			canShowHitAndStand = false;
+			canShowPlayAgain = true;
+			newDealer.endRound();
+		}
+		
+		currentBet = 0;
+		return "redirect:/hand";
 	}
 	
-//	@PostMapping("")
-//	public String playerStand() {
-//		newDealer.endRound();
-//		if (newDealer.isBust()) {
-//			newPlayer.p
-//		}
-//	}
+	@PostMapping("/stand")
+	public String playerStand() {
+		
+		// Determine winner and payout appropriately
+		newDealer.endRound();
+		if (newDealer.isBust()) {
+			newPlayer.payout(currentBet * 2);
+		} else if (newPlayer.hasBlackjack() && !newDealer.hasBlackjack()) {
+			newPlayer.payout(currentBet + currentBet / 2);
+		} else if (newPlayer.getWinner() == newDealer.getWinner()) {
+			newPlayer.payout(currentBet);
+		} else if (newPlayer.getWinner() > newDealer.getWinner()) {
+			newPlayer.payout(currentBet * 2);
+		}
+		
+		canShowHitAndStand = false;
+		canShowPlayAgain = true;
+		currentBet = 0;
+		return "redirect:/hand";
+	}
 	
+	@PostMapping("/again")
+	public String playAgain() {
+		return "home/new-game";
+	}
 }

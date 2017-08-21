@@ -40,5 +40,16 @@ public class Player {
 	public boolean hasBlackjack() {
 		return hand.isBlackjack();
 	}
+
+	public int getWinner() {
+		return hand.getBestHand();
+	}
+
+	public void payout(int money) {
+		wallet += money;
+	}
 	
+	public void playerClearHand() {
+		hand.clearHand();
+	}
 }

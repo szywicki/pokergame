@@ -36,4 +36,22 @@ public class Hand {
 		return cards.size() == 2 &&
 				(values[0] == 21 || values[1] == 21);
 	}
+	
+	public int getBestHand() {
+		int[] values = getValues();
+		if (values[0] < 21 && values[1] < 21) {
+				return Math.max(values[0], values[1]);
+		} else if (values[0] < 21) {
+				return values[0];
+		} else if (values[1] < 21) {
+				return values[1];
+		}
+		return 0;
+	}
+	
+	public void clearHand() {
+		while (!cards.isEmpty()) {
+			cards.remove(0);
+		}
+	}
 }

@@ -9,7 +9,7 @@ public class HoleCard implements Card {
 
 	@Override
 	public String getVisualRepresentation() {
-		return "HOLE";
+		return "Secret";
 	}
 
 	@Override

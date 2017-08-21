@@ -14,6 +14,7 @@
 		{{> home/dealer-form }}
 		{{> home/player-form }}
 	
+	{{#canShowHitAndStand}}
 	<form action="/hit" method="post">
 	<button>Hit</button>
 	</form>
@@ -21,7 +22,13 @@
 	<form action="/stand" method="post">
 	<button>Stand</button>
 	</form>
-		
+	{{/canShowHitAndStand}}
+	
+	{{#canShowPlayAgain}}
+	<form action="/again" method="post">
+	<button>Play Again</button>
+	</form>	
+	{{/canShowPlayAgain}}
 			
 	</body>
 </html>

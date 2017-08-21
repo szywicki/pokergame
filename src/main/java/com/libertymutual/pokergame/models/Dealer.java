@@ -70,5 +70,12 @@ public class Dealer {
 			values = hand.getValues();
 		}
 	}
+
+	public int getWinner() {
+		return hand.getBestHand();
+	}
 	
+	public void dealerClearHand() {
+		hand.clearHand();
+	}
 }

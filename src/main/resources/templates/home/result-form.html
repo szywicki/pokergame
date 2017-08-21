@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Blackjack</title>
+		<link rel="stylesheet"
+			  href="css/styles.css">
+	</head>
+	<body>
+	
+	{{> home/dealer-form }}
+	{{> home/player-form }}
+		
+	{{#youWin}}
+		<h1>YOU WON!!!</h1>
+	{{/youWin}}
+	
+	{{#youLose}}
+		<h1>YOU LOST!!</h1>
+	{{/youLose}}
+	
+	<h3>Your wallet balance is ${{ walletBalance }}</h3>
+		
+		
+	
+	<h2>To Play Again...</h2>
+		
+		{{> home/bet-form }}
+			
+	</body>
+</html>
