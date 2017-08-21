@@ -27,20 +27,22 @@ public class TableController {
 	
 	// Constructor for Table 
 	public TableController () {
-		newPlayer = new Player(100);
+		newPlayer = new Player();
 		newDealer = new Dealer();
+		this.currentBet = 0;
 		
 	}
 	
 	@PostMapping("") 
-	public ModelAndView startTheGame() {				
+	public ModelAndView startTheGame() {
 		ModelAndView mv = new ModelAndView("home/new-game");
+		mv.addObject("remainingCash", newPlayer.getWalletBalance());
 		return mv;
 	}
 	
 	@GetMapping("/hand")
 	public String refreshTheTable(Model model) {
-		model.addAttribute("currentBet", currentBet);
+		model.addAttribute("currentBet", newPlayer.getBet());
 		model.addAttribute("walletBalance", newPlayer.getWalletBalance());
 		model.addAttribute("dealerHand", newDealer.getCards());
 		model.addAttribute("playerHand", newPlayer.getCards());
@@ -53,7 +55,13 @@ public class TableController {
 		
 		// Player makes bet, wallet balance changes
 		currentBet = amount;
-		newPlayer.makeBet(amount);
+		newPlayer.makeBet(currentBet);
+				
+		if (currentBet > newPlayer.getWalletBalance());{
+			canShowHitAndStand = false;
+			canShowPlayAgain = false;
+			currentBet = 0;
+		}
 		
 		// Deal the cards
 		newDealer.newRound();
@@ -66,7 +74,6 @@ public class TableController {
 		newDealer.givePlayerCard(newPlayer);
 		newDealer.giveDealerCard();
 		
-		// Display the cards
 		return "redirect:/hand";
 			
 	}
@@ -79,16 +86,14 @@ public class TableController {
 	@PostMapping("/hit")
 	public String playerHit(Model model) {
 		// Give player another card if not a Bust
-		if (!newPlayer.isBust()) {
 		newDealer.givePlayerCard(newPlayer);
 		// If they are a bust, end the round and payout
-		} else {
+		if (newPlayer.isBust()) {
 			canShowHitAndStand = false;
 			canShowPlayAgain = true;
+			currentBet = 0;
 			newDealer.endRound();
-		}
-		
-		currentBet = 0;
+		} 		
 		return "redirect:/hand";
 	}
 	
@@ -98,13 +103,13 @@ public class TableController {
 		// Determine winner and payout appropriately
 		newDealer.endRound();
 		if (newDealer.isBust()) {
-			newPlayer.payout(currentBet * 2);
+			newPlayer.payout(newPlayer.getBet() * 2);
 		} else if (newPlayer.hasBlackjack() && !newDealer.hasBlackjack()) {
-			newPlayer.payout(currentBet + currentBet / 2);
+			newPlayer.payout(newPlayer.getBet() + newPlayer.getBet() / 2);
 		} else if (newPlayer.getWinner() == newDealer.getWinner()) {
-			newPlayer.payout(currentBet);
+			newPlayer.payout(newPlayer.getBet());
 		} else if (newPlayer.getWinner() > newDealer.getWinner()) {
-			newPlayer.payout(currentBet * 2);
+			newPlayer.payout(newPlayer.getBet() * 2);
 		}
 		
 		canShowHitAndStand = false;
@@ -114,7 +119,8 @@ public class TableController {
 	}
 	
 	@PostMapping("/again")
-	public String playAgain() {
+	public String playAgain(Model model) {
+		model.addAttribute("remainingCash", newPlayer.getWalletBalance());
 		return "home/new-game";
 	}
 }

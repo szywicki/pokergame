@@ -4,18 +4,21 @@ import java.util.List;
 
 public class Player {
 
-	private int wallet = 0;
+	private int wallet;
 	private Hand hand = new Hand();
+	private int bet;
 		
-	public Player (int wallet){
-		this.wallet = wallet;
+	public Player (){
+		this.wallet = 100;
+		this.bet = 0;
 	}
 	
 	public void makeBet(int betAmount) {
-		if (wallet != 0) {
-		wallet = wallet - betAmount;
+		bet = betAmount;
+		if (bet <= wallet) {
+		wallet = wallet - bet;
 	} else {
-		betAmount = 0;
+		bet = 0;
 	}
 	}
 	
@@ -52,4 +55,9 @@ public class Player {
 	public void playerClearHand() {
 		hand.clearHand();
 	}
+
+	public int getBet() {
+		return bet;
+	}
+	
 }
